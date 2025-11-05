@@ -1,4 +1,3 @@
-#!/usr/bin/env poetry run python3
 """Retrieve a playlist"""
 
 import argparse
@@ -7,7 +6,7 @@ import logging
 
 import googleapiclient.errors
 
-import youtube
+from . import youtube
 
 LOGGER = logging.getLogger(__name__)
 
@@ -15,7 +14,7 @@ LOGGER = logging.getLogger(__name__)
 def get_options(*args):
     """ Set options for the CLI """
     parser = argparse.ArgumentParser("get_playlist")
-    parser.add_argument("playlist_id")
+    parser.add_argument("playlist_id", help="YouTube playlist ID")
 
     youtube.add_arguments(parser)
 
@@ -30,7 +29,7 @@ def get_playlist(client, playlist_id):
     while True:
         try:
             request = client.playlistItems().list(
-                part="snippet,contentDetails",
+                part="snippet,contentDetails,status",
                 playlistId=playlist_id,
                 maxResults=50,
                 pageToken=next_page_token

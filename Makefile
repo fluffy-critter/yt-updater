@@ -1,4 +1,8 @@
-all: format pylint mypy
+all: install format pylint mypy
+
+.PHONY: install
+install:
+	poetry install
 
 .PHONY: format
 format:
@@ -7,9 +11,10 @@ format:
 
 .PHONY: pylint
 pylint:
-	poetry run pylint *.py
+	poetry run pylint yt_updater
 
 .PHONY: mypy
 mypy:
-	poetry run mypy *.py
+	poetry run mypy -p yt_updater --ignore-missing-imports
+
 

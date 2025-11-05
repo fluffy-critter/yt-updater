@@ -17,8 +17,6 @@ LOGGER = logging.getLogger(__name__)
 # DO NOT leave this setting enabled in production.
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
-APP_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)))
-
 CLIENT_SECRETS_FILE = "client.json"  # Downloaded from Google Cloud Console
 SCOPES = ["https://www.googleapis.com/auth/youtube.force-ssl"]
 CREDENTIALS_FILE = 'token.pickle'
@@ -27,9 +25,9 @@ CREDENTIALS_FILE = 'token.pickle'
 def add_arguments(parser):
     """ Add arguments to an argparse.ArgumentParser """
     parser.add_argument("--client_json", help="Path to the client secrets file",
-                        default=os.path.join(APP_DIR, CLIENT_SECRETS_FILE))
+                        default=CLIENT_SECRETS_FILE)
     parser.add_argument("--login_token", help="Path to the login token",
-                        default=os.path.join(APP_DIR, CREDENTIALS_FILE))
+                        default=CREDENTIALS_FILE)
 
     parser.add_argument(
         "--verbosity",
