@@ -32,8 +32,8 @@ def add_arguments(parser):
                         default=os.path.join(APP_DIR, CREDENTIALS_FILE))
 
     parser.add_argument(
-        "-v",
         "--verbosity",
+        "-v",
         action="count",
         help="Increase output logging level",
         default=0,
