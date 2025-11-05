@@ -1,0 +1,27 @@
+{%- macro multiline(text) -%}
+{#- convert bandcrash's adaptive multiline syntax -#}
+{%- if text is string -%}{{text}}
+{%- else -%}{{text|join('\n')}}
+{% endif -%}
+{%- endmacro -%}
+
+{{album.title}}
+©{{album.year}} {{album.artist}}
+
+Track {{tnum}}: {{track.title}}
+{%- if track.cover_of %}Original song by {{track.cover_of}}{% endif %}
+
+{{album.artist_url}}
+{{album.album_url}}
+
+{% if track.about %}
+**ABOUT THIS TRACK**
+
+{{multiline(track.about)}}
+{%- endif -%}
+
+{% if track.lyrics -%}
+**LYRICS**
+
+{{multiline(track.lyrics)}}
+{%- endif -%}
