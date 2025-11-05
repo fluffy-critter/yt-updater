@@ -4,6 +4,18 @@ Useful tools for bulk-updating YouTube playlists and scheduling publication en m
 
 ## Setup
 
+### Installation
+
+I recommend installing this in one of a few ways:
+
+* **poetry sandbox**: Clone the repo, install [poetry](https://python-poetry.org), and then run `make install`; after this you can run the scripts with e.g. `poetry run getPlaylist` or `poetry run getVideos` from within the source directory.
+
+* **venv sandbox**: Create a [virtualenv](https://docs.python.org/3/library/venv.html) and, after activating it, run `pip install yt_updater`
+
+* **pipx install** (less recommended): Using [pipx](https://pipx.pypa.io/) install this as `yt_updater` and it will appear in your global path
+
+### Configuration
+
 You will need to create an application for the [YouTube Data API](https://developers.google.com/youtube/v3). See the [getting started guide](https://developers.google.com/youtube/v3/getting-started) for more information.
 
 You'll need to create an OAuth 2.0 client set as a "Desktop app." After creating an OAuth 2.0 client, download its client data and save it as `client.json` or the like. If you need multiple registered apps for some reason, you can specify your client file with the `--client-json` option.
