@@ -200,7 +200,7 @@ def update_playlist(options, client) -> None:
         send_batch(snippets, 'snippet')
     else:
         print("##### Snippets #####")
-        print(snippets)
+        print(json.dumps(snippets,indent=3))
 
     if options.date:
         statuses = [
@@ -213,7 +213,7 @@ def update_playlist(options, client) -> None:
             send_batch(statuses, 'status')
         else:
             print("##### Statuses #####")
-            print(statuses)
+            print(json.dumps(statuses,indent=3))
 
 
 def main():

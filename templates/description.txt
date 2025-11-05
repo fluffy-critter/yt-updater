@@ -9,19 +9,19 @@
 ©{{album.year}} {{album.artist}}
 
 Track {{tnum}}: {{track.title}}
-{%- if track.cover_of %}Original song by {{track.cover_of}}{% endif %}
+{% if track.cover_of %}Original song by {{track.cover_of}}{% endif %}
 
 {{album.artist_url}}
 {{album.album_url}}
 
 {% if track.about %}
-**ABOUT THIS TRACK**
+*ABOUT THIS TRACK*
 
 {{multiline(track.about)}}
-{%- endif -%}
+{%- endif %}
 
 {% if track.lyrics -%}
-**LYRICS**
+*LYRICS*
 
 {{multiline(track.lyrics)}}
 {%- endif -%}
