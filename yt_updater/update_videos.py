@@ -3,11 +3,13 @@
 import argparse
 import json
 import logging
+import re
 import typing
 
 import arrow
 import jinja2
 import Levenshtein
+import unidecode
 
 from . import youtube
 
@@ -41,6 +43,7 @@ def get_options(*args):
 
     return parser.parse_args(*args)
 
+
 def slugify_filename(fname: str) -> str:
     """ Generate a safe filename """
 
@@ -48,7 +51,7 @@ def slugify_filename(fname: str) -> str:
     fname = fname.translate(dict.fromkeys(range(32)))
 
     # translate unicode to ascii
-    fname = unidecode(fname)
+    fname = unidecode.unidecode(fname)
 
     # collapse/convert whitespace
     fname = ' '.join(fname.split())
@@ -216,7 +219,7 @@ def update_playlist(options, client) -> None:
         send_batch(snippets, 'snippet')
     else:
         print("##### Snippets #####")
-        print(json.dumps(snippets,indent=3))
+        print(json.dumps(snippets, indent=3))
 
     if options.date:
         statuses = [
@@ -229,7 +232,7 @@ def update_playlist(options, client) -> None:
             send_batch(statuses, 'status')
         else:
             print("##### Statuses #####")
-            print(json.dumps(statuses,indent=3))
+            print(json.dumps(statuses, indent=3))
 
 
 def main():

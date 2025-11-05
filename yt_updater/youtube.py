@@ -1,15 +1,15 @@
 """ wrapper for the youtube API """
 
+import argparse
 import logging
 import os
-import pickle
-import argparse
 import typing
+
 import google.auth.transport.requests
-from google.oauth2.credentials import Credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
 import googleapiclient.errors
+from google.oauth2.credentials import Credentials
 
 LOG_LEVELS = [logging.WARNING, logging.INFO, logging.DEBUG]
 LOGGER = logging.getLogger(__name__)
@@ -38,13 +38,15 @@ def add_arguments(parser):
         default=0,
     )
 
+
 def get_options(*args):
     """ Get a minimal set of arguments, useful for REPL """
     parser = argparse.ArgumentParser(__name__)
     add_arguments(parser)
     return parser.parse_args(*args)
 
-def get_client(options:typing.Optional[argparse.Namespace]=None):
+
+def get_client(options: typing.Optional[argparse.Namespace] = None):
     """ Get the YouTube API client """
 
     if options is None:
@@ -70,7 +72,7 @@ def get_client(options:typing.Optional[argparse.Namespace]=None):
                 options.client_json, SCOPES)
             credentials = flow.run_local_server(port=0)
 
-        with open(store, 'w') as token:
+        with open(store, 'w', encoding='utf-8') as token:
             token.write(credentials.to_json())
             LOGGER.info("Credentials saved/updated to %s", store)
     else:
