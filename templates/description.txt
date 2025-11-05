@@ -5,14 +5,11 @@
 {% endif -%}
 {%- endmacro -%}
 
-{{album.title}}
-©{{album.year}} {{album.artist}}
+{{album.title}} {{album.album_url}}
+©{{album.year}} {{album.artist}} {{album.artist_url}}
 
 Track {{tnum}}: {{track.title}}
 {% if track.cover_of %}Original song by {{track.cover_of}}{% endif %}
-
-{{album.artist_url}}
-{{album.album_url}}
 
 {% if track.about %}
 *ABOUT THIS TRACK*

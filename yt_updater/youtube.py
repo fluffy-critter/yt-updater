@@ -24,9 +24,9 @@ CREDENTIALS_FILE = 'token.pickle'
 
 def add_arguments(parser):
     """ Add arguments to an argparse.ArgumentParser """
-    parser.add_argument("--client_json", help="Path to the client secrets file",
+    parser.add_argument("--client-json", help="Path to the client secrets file",
                         default=CLIENT_SECRETS_FILE)
-    parser.add_argument("--login_token", help="Path to the login token",
+    parser.add_argument("--login-token", help="Path to the login token",
                         default=CREDENTIALS_FILE)
 
     parser.add_argument(

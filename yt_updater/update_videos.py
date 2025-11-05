@@ -6,7 +6,6 @@ import logging
 import typing
 
 import arrow
-import bandcrash.util
 import jinja2
 import Levenshtein
 
@@ -42,6 +41,23 @@ def get_options(*args):
 
     return parser.parse_args(*args)
 
+def slugify_filename(fname: str) -> str:
+    """ Generate a safe filename """
+
+    # remove control characters
+    fname = fname.translate(dict.fromkeys(range(32)))
+
+    # translate unicode to ascii
+    fname = unidecode(fname)
+
+    # collapse/convert whitespace
+    fname = ' '.join(fname.split())
+
+    # convert runs of problematic characters to -
+    fname = re.sub(r'[\-\$/\\:\<\>\*\"\|&]+', '-', fname)
+
+    return fname
+
 
 def get_value(item, path, default=None):
     """ Get a value from a JSON dictionary """
@@ -60,7 +76,7 @@ def match_item(options, item, tracks) -> typing.Tuple[int, dict]:
 
     item_title = get_value(item, TITLE_PATH).casefold()
     for idx, track in tracks:
-        filename = bandcrash.util.slugify_filename(track.get('title', ''))
+        filename = slugify_filename(track.get('title', ''))
         check_title = options.input_title.format(tnum=idx,
                                                  title=track.get('title', ''),
                                                  filename=filename.casefold())
