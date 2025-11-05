@@ -98,8 +98,10 @@ def make_snippet_update(options, template, item, idx, track, album) -> dict:
         'snippet': snippet
     }
 
+
 def make_schedule_update(options, item, idx) -> dict:
-    status =  item['status']
+    """ build an update to schedule a video """
+    status = item['status']
 
     pub_date = arrow.get(options.date).shift(
         seconds=(idx - 1)*options.date_incr).to('UTC')
@@ -108,6 +110,7 @@ def make_schedule_update(options, item, idx) -> dict:
         'id': item['id'],
         'status': status
     }
+
 
 def get_template(options) -> typing.Optional[jinja2.Template]:
     """ Load the description template """
@@ -189,20 +192,29 @@ def update_playlist(options, client) -> None:
         LOGGER.info("Updates submitted")
 
     snippets = [
-        make_snippet_update(options, template, item, idx, track, album) for item, idx, track in matches
+        make_snippet_update(options, template, item, idx, track, album)
+        for item, idx, track in matches
     ]
     LOGGER.info("##### Snippet updates: %s", json.dumps(snippets, indent=3))
     if snippets and not options.dry_run:
         send_batch(snippets, 'snippet')
+    else:
+        print("##### Snippets #####")
+        print(snippets)
 
     if options.date:
         statuses = [
             make_schedule_update(options, item, idx) for item, idx, _ in matches
             if item['status']['privacyStatus'] == 'private'
         ]
-        LOGGER.info("##### Schedule updates: %s", json.dumps(statuses, indent=3))
+        LOGGER.info("##### Schedule updates: %s",
+                    json.dumps(statuses, indent=3))
         if statuses and not options.dry_run:
             send_batch(statuses, 'status')
+        else:
+            print("##### Statuses #####")
+            print(statuses)
+
 
 def main():
     """ entry point """
