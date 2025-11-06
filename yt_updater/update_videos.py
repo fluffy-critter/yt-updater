@@ -5,6 +5,7 @@ import json
 import logging
 import re
 import typing
+import sys
 
 import arrow
 import jinja2
@@ -24,7 +25,7 @@ def get_options(*args):
     parser = argparse.ArgumentParser("update_videos")
     parser.add_argument("playlist_json", help="YouTube playlist JSON")
     parser.add_argument("album_json", help="Bandcrash JSON file for the album")
-    parser.add_argument("--date", type=str,
+    parser.add_argument("--date", "-d", type=str,
                         help="Scheduled release date", default=None)
     parser.add_argument("--date-incr", type=int,
                         help="Track-number date increment, in seconds", default=60)
@@ -97,40 +98,62 @@ def match_item(options, item, tracks) -> typing.Tuple[int, dict]:
     return best_track
 
 
-def make_snippet_update(options, template, item, idx, track, album) -> dict:
-    """ Build snippet update """
-    # pylint:disable=too-many-arguments,too-many-positional-arguments
+def make_item_update(options, template, item, idx, track, album) -> typing.Tuple[str, dict]:
+    """ Build an item update """
+    # pylint:disable=too-many-arguments,too-many-positional-arguments,too-many-locals
 
-    ytid = item['id']
+    LOGGER.debug("===== Building update for %s (%s)",
+                 item['id'], item['snippet']['title'])
+
+    update = {
+        'id': item['id']
+    }
+
+    parts = set()
 
     snippet = item['snippet']
 
-    snippet['title'] = options.output_title.format(
-        tnum=idx, title=track['title'])
+    title = options.output_title.format(tnum=idx, title=track['title']).strip()
+    if title != snippet.get('title'):
+        LOGGER.debug("----- Updating title:\nold: %s\nnew: %s",
+                     snippet['title'], title)
+
+        parts.add('snippet')
+        snippet['title'] = title
 
     if template:
-        snippet['description'] = template.render(
-            album=album, tnum=idx, track=track, item=item)
+        description = template.render(
+            album=album, tnum=idx, track=track, item=item).strip()
+        if description != snippet.get('description'):
+            LOGGER.debug("----- Updating description:\n### OLD \n%s\n### NEW\n%s",
+                         snippet.get('description'),
+                         description)
 
-    return {
-        'id': ytid,
-        'snippet': snippet
-    }
+            parts.add('snippet')
+            snippet['description'] = description
 
+    if 'snippet' in parts:
+        update['snippet'] = snippet
 
-def make_schedule_update(options, item, idx) -> dict:
-    """ build an update to schedule a video """
     status = item['status']
 
-    pub_date = arrow.get(options.date).shift(
-        seconds=(idx - 1)*options.date_incr).to('UTC')
-    status['publishAt'] = pub_date.isoformat().replace('+00:00', 'Z')
-    return {
-        'id': item['id'],
-        'status': status
-    }
+    if options.date and status['privacyStatus'] in ('private', 'draft'):
+        pub_date = arrow.get(options.date).shift(
+            seconds=(idx - 1)*options.date_incr)
+        LOGGER.debug("----- Scheduling for %s (%s)",
+                     pub_date.format(), pub_date.humanize())
+        parts.add('status')
+        status['privacyStatus'] = 'private'
+        status['publishAt'] = pub_date.to(
+            'UTC').isoformat().replace('+00:00', 'Z')
 
-def cleanup_filter(text:str) -> str:
+    if 'status' in parts:
+        update['status'] = status
+
+    return ','.join(parts), update
+
+
+def cleanup_filter(text: str) -> str:
     """ Clean up common turds that sneak into descriptions """
 
     # Limit spans of newlines to two
@@ -216,42 +239,35 @@ def update_playlist(options, client) -> None:
 
     template = get_template(options.description)
 
-    def send_batch(updates, part):
+    def send_batch(updates):
         batch = client.new_batch_http_request(callback=update_callback)
-        for body in updates:
-            batch.add(client.videos().update(part=part, body=body))
+        for part, body in updates:
+            if part:
+                batch.add(client.videos().update(part=part, body=body))
         LOGGER.info("Sending %d updates...", len(updates))
         batch.execute()
         LOGGER.info("Updates submitted")
 
-    snippets = [
-        make_snippet_update(options, template, item, idx, track, album)
+    updates = [
+        make_item_update(options, template, item, idx, track, album)
         for item, idx, track in matches
     ]
-    LOGGER.info("##### Snippet updates: %s", json.dumps(snippets, indent=3))
-    if snippets and not options.dry_run:
-        send_batch(snippets, 'snippet')
+    LOGGER.info("##### Updates: %s", json.dumps(updates, indent=3))
+    if updates and not options.dry_run:
+        send_batch(updates)
     else:
-        print("##### Snippets #####")
-        print(json.dumps(snippets, indent=3))
-
-    if options.date:
-        statuses = [
-            make_schedule_update(options, item, idx) for item, idx, _ in matches
-            if item['status']['privacyStatus'] == 'private'
-        ]
-        LOGGER.info("##### Schedule updates: %s",
-                    json.dumps(statuses, indent=3))
-        if statuses and not options.dry_run:
-            send_batch(statuses, 'status')
-        else:
-            print("##### Statuses #####")
-            print(json.dumps(statuses, indent=3))
+        print("##### Updates #####")
+        print(json.dumps(updates, indent=3))
 
 
 def main():
     """ entry point """
     options = get_options()
+
+    if options.date and arrow.get(options.date) < arrow.get():
+        sys.exit(f"Scheduled date ({arrow.get(options.date)}) is in the past!")
+
+
     client = youtube.get_client(options)
     update_playlist(options, client)
 
