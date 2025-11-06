@@ -4,8 +4,8 @@ import argparse
 import json
 import logging
 import re
-import typing
 import sys
+import typing
 
 import arrow
 import jinja2
@@ -266,7 +266,6 @@ def main():
 
     if options.date and arrow.get(options.date) < arrow.get():
         sys.exit(f"Scheduled date ({arrow.get(options.date)}) is in the past!")
-
 
     client = youtube.get_client(options)
     update_playlist(options, client)
