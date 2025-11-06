@@ -66,6 +66,16 @@ There is also a filter, `cleanup`, which will do some helpful cleanup steps on t
 
 An example template is in `templates/description.txt`.
 
+## YouTube API quota limits
+
+By default, YouTube API gives you 10,000 units of work per day. For the purposes of these scripts, they cost the following:
+
+* `getPlaylist`: 1 unit per 50 videos in the playlist
+* `updateVideos`: 1 unit per 50 videos in the playlist + 50 units per video when not doing a dry run
+
+The 50-unit per update cost tends to run out very quickly; for example, on a 20-track album, every attempt at updating or scheduling the publication will cost 1000 units, so you only get 9 tries per day to get things the way you want them.
+
+
 ## Disclaimer
 
 This software was partially written with the help of Google's AI chatbot, because life's too short to try to wade through Google's incomprehensibly-dense-yet-vague API documentation.
