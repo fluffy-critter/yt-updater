@@ -62,6 +62,8 @@ The description template is a file in [Jinja2](https://jinja.palletsprojects.com
 * `track`: The track data from the album descriptor
 * `item`: The original YouTube item data from the playlist file
 
+There is also a filter, `cleanup`, which will do some helpful cleanup steps on the generated description.
+
 An example template is in `templates/description.txt`.
 
 ## Disclaimer

@@ -130,14 +130,28 @@ def make_schedule_update(options, item, idx) -> dict:
         'status': status
     }
 
+def cleanup_filter(text:str) -> str:
+    """ Clean up common turds that sneak into descriptions """
 
-def get_template(options) -> typing.Optional[jinja2.Template]:
+    # Limit spans of newlines to two
+    text = re.sub(r'\n\n+', r'\n\n', text)
+
+    # Convert Markdown-style links into plaintext ones
+    text = re.sub(r'\[([^\]]*)\]\(', r'\1 (', text)
+
+    return text
+
+
+def get_template(path) -> typing.Optional[jinja2.Template]:
     """ Load the description template """
-    if not options.description:
+    if not path:
         return None
 
     env = jinja2.Environment()
-    with open(options.description, 'r', encoding='utf-8') as file:
+
+    env.filters['cleanup'] = cleanup_filter
+
+    with open(path, 'r', encoding='utf-8') as file:
         return env.from_string(file.read())
 
 
@@ -200,7 +214,7 @@ def update_playlist(options, client) -> None:
     LOGGER.info("##### Current playlist data: %s",
                 json.dumps(matches, indent=3))
 
-    template = get_template(options)
+    template = get_template(options.description)
 
     def send_batch(updates, part):
         batch = client.new_batch_http_request(callback=update_callback)

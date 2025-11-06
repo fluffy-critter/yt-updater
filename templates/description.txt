@@ -5,6 +5,7 @@
 {% endif -%}
 {%- endmacro -%}
 
+{%- filter cleanup -%}
 {{album.title}} {{album.album_url}}
 ©{{album.year}} {{album.artist}} {{album.artist_url}}
 
@@ -22,3 +23,5 @@ Track {{tnum}}: {{track.title}}
 
 {{multiline(track.lyrics)}}
 {%- endif -%}
+{%- endfilter -%}
+
