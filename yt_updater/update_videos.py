@@ -10,6 +10,7 @@ import typing
 import arrow
 import jinja2
 import Levenshtein
+import pytimeparse
 import unidecode
 
 from . import youtube
@@ -27,8 +28,8 @@ def get_options(*args):
     parser.add_argument("album_json", help="Bandcrash JSON file for the album")
     parser.add_argument("--date", "-d", type=str,
                         help="Scheduled release date", default=None)
-    parser.add_argument("--date-incr", type=int,
-                        help="Track-number date increment, in seconds", default=60)
+    parser.add_argument("--date-incr", type=str,
+                        help="Time between track updates", default="15m")
     parser.add_argument("--dry-run", "-n", action="store_true",
                         help="Don't execute the update", default=False)
     parser.add_argument("--description", "-D", type=str,
@@ -139,7 +140,7 @@ def make_item_update(options, template, item, idx, track, album) -> typing.Tuple
 
     if options.date and status['privacyStatus'] in ('private', 'draft'):
         pub_date = arrow.get(options.date).shift(
-            seconds=(idx - 1)*options.date_incr)
+            seconds=(idx - 1)*pytimeparse.parse(options.date_incr))
         LOGGER.debug("----- Scheduling for %s (%s)",
                      pub_date.format(), pub_date.humanize())
         if 'publishAt' not in status or pub_date != arrow.get(status['publishAt']):
@@ -249,10 +250,10 @@ def update_playlist(options, client) -> None:
         batch.execute()
         LOGGER.info("Updates submitted")
 
-    updates = [
+    updates = [(part, body) for (part, body) in [
         make_item_update(options, template, item, idx, track, album)
         for item, idx, track in matches
-    ]
+    ] if part]
     LOGGER.info("##### Updates: %s", json.dumps(updates, indent=3))
     if updates and not options.dry_run:
         send_batch(updates)
@@ -267,6 +268,14 @@ def main():
 
     if options.date and arrow.get(options.date) < arrow.get():
         sys.exit(f"Scheduled date ({arrow.get(options.date)}) is in the past!")
+
+    if options.date_incr and not pytimeparse.parse(options.date_incr):
+        options.date_incr = f'{options.date_incr}s'
+        if not pytimeparse.parse(options.date_incr):
+            sys.exit(
+                f"Don't know how to parse a time delta of {options.date_incr}")
+        LOGGER.warning("Treating time increment as %s (%d seconds}",
+                       options.date_incr, pytimeparse.parse(options.date_incr))
 
     client = youtube.get_client(options)
     update_playlist(options, client)

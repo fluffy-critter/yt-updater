@@ -872,6 +872,18 @@ files = [
 six = ">=1.5"
 
 [[package]]
+name = "pytimeparse"
+version = "1.1.8"
+description = "Time expression parser"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "pytimeparse-1.1.8-py2.py3-none-any.whl", hash = "sha256:04b7be6cc8bd9f5647a6325444926c3ac34ee6bc7e69da4367ba282f076036bd"},
+    {file = "pytimeparse-1.1.8.tar.gz", hash = "sha256:e86136477be924d7e670646a98561957e8ca7308d44841e21f5ddea757556a0a"},
+]
+
+[[package]]
 name = "rapidfuzz"
 version = "3.14.3"
 description = "rapid fuzzy string matching"
@@ -1116,4 +1128,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.14"
-content-hash = "5f2e1f2e3fe8c5f697c8b16eece2ea33c81cd32ad6e32e2562988416de627f45"
+content-hash = "df822882267501a0159c14c49e1d72a1ed63f1ef767c574bcf2332e6e2198463"
