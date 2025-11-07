@@ -142,10 +142,11 @@ def make_item_update(options, template, item, idx, track, album) -> typing.Tuple
             seconds=(idx - 1)*options.date_incr)
         LOGGER.debug("----- Scheduling for %s (%s)",
                      pub_date.format(), pub_date.humanize())
-        parts.add('status')
-        status['privacyStatus'] = 'private'
-        status['publishAt'] = pub_date.to(
-            'UTC').isoformat().replace('+00:00', 'Z')
+        if 'publishAt' not in status or pub_date != arrow.get(status['publishAt']):
+            parts.add('status')
+            status['privacyStatus'] = 'private'
+            status['publishAt'] = pub_date.to(
+                'UTC').isoformat().replace('+00:00', 'Z')
 
     if 'status' in parts:
         update['status'] = status
