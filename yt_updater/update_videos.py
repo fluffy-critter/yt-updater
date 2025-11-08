@@ -288,7 +288,9 @@ class VideoUpdater:
 
             if status['privacyStatus'] == 'public':
                 LOGGER.info("Not scheduling update for public video")
-            elif status['privacyStatus'] != 'private' or arrow.get(status['publishAt']) != pub_date:
+            elif (status['privacyStatus'] != 'private' or
+                'publishAt' not in status or
+                arrow.get(status['publishAt']) != pub_date):
                 LOGGER.info("Scheduling update for %s (%s)",
                             pub_date, pub_date.humanize())
 
