@@ -6,11 +6,17 @@
 {%- endmacro -%}
 
 {%- filter cleanup -%}
-{{album.title}} {{album.album_url}}
+{{album.title}}
 ©{{album.year}} {{album.artist}} {{album.artist_url}}
 
 Track {{tnum}}: {{track.title}}
 {% if track.cover_of %}Original song by {{track.cover_of}}{% endif %}
+
+{% if album.album_url %}
+Get the album at {{album.album_url}}
+{% elif album.artist_url %}
+See more music at {{album.artist_url}}
+{% endif %}
 
 {% if track.about %}
 *ABOUT THIS TRACK*

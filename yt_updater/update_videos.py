@@ -42,7 +42,7 @@ def get_options(*args):
     parser.add_argument("--dry-run", "-n", action="store_true",
                         help="Don't execute the update (NOTE: This still calls YTAPI)",
                         default=False)
-    parser.add_argument("--description", "-D", type=str,
+    parser.add_argument("--description", "-t", type=str,
                         help="Jinja2 template for the description", default=None)
     parser.add_argument("--max-distance", "-l", type=int,
                         help="Maximum Levenshtein distance for title matching", default=5)
@@ -265,6 +265,8 @@ class VideoUpdater:
 
             parts.add('snippet')
             snippet['title'] = title
+            if 'localized' in snippet:
+                snippet['localized']['title'] = title
 
         if self.template:
             description = self.template.render(
@@ -277,6 +279,8 @@ class VideoUpdater:
 
                 parts.add('snippet')
                 snippet['description'] = description
+                if 'localized' in snippet:
+                    snippet['localized']['description'] = description
 
         if 'snippet' in parts:
             update['snippet'] = snippet
