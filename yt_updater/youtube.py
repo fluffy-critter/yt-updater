@@ -54,7 +54,7 @@ def get_client(options: typing.Optional[argparse.Namespace] = None):
 
     logging.basicConfig(
         level=LOG_LEVELS[min(options.verbosity, len(
-            LOG_LEVELS) - 1)], format="%(message)s"
+            LOG_LEVELS) - 1)], format="%(levelname)s: %(message)s"
     )
 
     credentials = None

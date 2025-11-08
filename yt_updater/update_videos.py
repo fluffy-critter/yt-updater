@@ -36,12 +36,16 @@ def get_options(*args):
                         help="Scheduled release date", default=None)
     parser.add_argument("--date-incr", type=str,
                         help="Time between track updates", default="15m")
+    parser.add_argument("--match-only", action="store_true",
+                        help="Match tracks against the playlist and print a report",
+                        default=False)
     parser.add_argument("--dry-run", "-n", action="store_true",
-                        help="Don't execute the update", default=False)
+                        help="Don't execute the update (NOTE: This still calls YTAPI)",
+                        default=False)
     parser.add_argument("--description", "-D", type=str,
                         help="Jinja2 template for the description", default=None)
     parser.add_argument("--max-distance", "-l", type=int,
-                        help="Maximum Levenshtein distance for title reconciliation", default=5)
+                        help="Maximum Levenshtein distance for title matching", default=5)
     parser.add_argument("--input-title", type=str, help="Format for the playlist's video title",
                         default="{tnum:02} {filename}")
     parser.add_argument("--output-title", type=str, help="Format for the updated title",
@@ -331,6 +335,13 @@ def main():
 
     matches = updater.map_tracks(playlist, album)
     LOGGER.info("Matched %d/%d playlist tracks", len(matches), len(playlist))
+
+    if options.match_only:
+        print(json.dumps([{"youtube_id": ytid,
+                           "track_num": tnum,
+                           "title": track.get('title')
+                           } for ytid, tnum, track in matches], indent=3))
+        return
 
     details = updater.get_details(client, matches)
 
