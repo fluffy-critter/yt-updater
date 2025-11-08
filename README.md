@@ -60,7 +60,7 @@ The description template is a file in [Jinja2](https://jinja.palletsprojects.com
 * `album`: The top-level album descriptor
 * `tnum`: The track number on the album
 * `track`: The track data from the album descriptor
-* `item`: The original YouTube item data from the playlist file
+* `video`: The original YouTube item details
 
 There is also a filter, `cleanup`, which will do some helpful cleanup steps on the generated description.
 

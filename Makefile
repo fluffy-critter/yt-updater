@@ -15,6 +15,6 @@ pylint:
 
 .PHONY: mypy
 mypy:
-	poetry run mypy -p yt_updater --ignore-missing-imports
+	poetry run mypy -p yt_updater --ignore-missing-imports --check-untyped-defs
 
 
