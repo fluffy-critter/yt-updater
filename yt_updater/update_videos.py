@@ -148,6 +148,8 @@ class VideoUpdater:
 
         if options.description:
             self.template = load_template(options.description)
+        else:
+            self.tempate = None
 
         self.match_distance = options.max_distance
 
