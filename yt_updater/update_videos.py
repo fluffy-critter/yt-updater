@@ -46,10 +46,15 @@ def get_options(*args):
                         help="Jinja2 template for the description", default=None)
     parser.add_argument("--max-distance", "-l", type=int,
                         help="Maximum Levenshtein distance for title matching", default=5)
+
     parser.add_argument("--input-title", type=str, help="Format for the playlist's video title",
                         default="{tnum:02} {filename}")
-    parser.add_argument("--output-title", type=str, help="Format for the updated title",
-                        default="{title}")
+
+    feature = parser.add_mutually_exclusive_group()
+    feature.add_argument("--output-title", type=str, help="Format for the updated title",
+                         default="{title}")
+    feature.add_argument("--keep-title", action='store_const',
+                         const='', dest='output_title')
 
     youtube.add_arguments(parser)
 
@@ -86,15 +91,6 @@ def read_album(album_path):
     """ Given a path to an album spec, return its data """
     with open(album_path, 'r', encoding='utf-8') as file:
         return json.loads(file.read())
-
-
-def get_value(item, path, default=None):
-    """ Get a value from a JSON dictionary """
-    for key in path:
-        if not isinstance(item, dict) or not key in item:
-            return default
-        item = item[key]
-    return item
 
 
 def cleanup_filter(text: str) -> str:
@@ -149,7 +145,7 @@ class VideoUpdater:
         if options.description:
             self.template = load_template(options.description)
         else:
-            self.tempate = None
+            self.template = None
 
         self.match_distance = options.max_distance
 
@@ -260,15 +256,16 @@ class VideoUpdater:
 
         snippet = video['snippet']
 
-        title = self.output_title_fmt.format(
-            tnum=tnum, title=track['title']).strip()
-        if title != video.get('title'):
-            LOGGER.info("Changed title: %s -> %s", snippet['title'], title)
+        if self.output_title_fmt:
+            title = self.output_title_fmt.format(
+                tnum=tnum, title=track['title']).strip()
+            if title != video.get('title'):
+                LOGGER.info("Changed title: %s -> %s", snippet['title'], title)
 
-            parts.add('snippet')
-            snippet['title'] = title
-            if 'localized' in snippet:
-                snippet['localized']['title'] = title
+                parts.add('snippet')
+                snippet['title'] = title
+                if 'localized' in snippet:
+                    snippet['localized']['title'] = title
 
         if self.template:
             description = self.template.render(
@@ -295,8 +292,8 @@ class VideoUpdater:
             if status['privacyStatus'] == 'public':
                 LOGGER.info("Not scheduling update for public video")
             elif (status['privacyStatus'] != 'private' or
-                'publishAt' not in status or
-                arrow.get(status['publishAt']) != pub_date):
+                  'publishAt' not in status or
+                  arrow.get(status['publishAt']) != pub_date):
                 LOGGER.info("Scheduling update for %s (%s)",
                             pub_date, pub_date.humanize())
 
