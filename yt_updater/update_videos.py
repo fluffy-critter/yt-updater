@@ -96,6 +96,9 @@ def read_album(album_path):
 def cleanup_filter(text: str) -> str:
     """ Clean up common turds that sneak into descriptions """
 
+    # Remove HTML
+    text = re.sub(r'<[^>]+>', r'', text)
+
     # Limit spans of newlines to two
     text = re.sub(r'\n\n+', r'\n\n', text)
 
