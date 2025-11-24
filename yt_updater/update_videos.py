@@ -290,7 +290,7 @@ class VideoUpdater:
         status = video['status']
 
         if self.start_date is not None:
-            pub_date = self.start_date.shift(seconds=tnum*self.date_incr)
+            pub_date = self.start_date.shift(seconds=(tnum - 1)*self.date_incr)
 
             if status['privacyStatus'] == 'public':
                 LOGGER.info("Not scheduling update for public video")
@@ -315,9 +315,13 @@ def update_callback(request_id, response, exception):
     """ Retrieve batch update status """
     if exception is not None:
         LOGGER.warning("Got error on request_id %s: %s", request_id, exception)
+        LOGGER.info("%s", json.dumps(response))
     else:
-        LOGGER.info("Successfully updated video %s: %s",
-                    request_id, json.dumps(response, indent=3))
+        LOGGER.info("Successfully updated video %s", request_id)
+        LOGGER.debug("%s", json.dumps(response, indent=3))
+        if 'status' in response and 'publishAt' in response['status']:
+            pub_date = arrow.get(response['status']['publishAt'])
+            LOGGER.info("Scheduled time: %s (%s)", pub_date, pub_date.humanize())
 
 
 def send_updates(client, updates):
@@ -356,7 +360,18 @@ def main():
     updates = updater.make_updates(matches, details, album)
 
     if options.dry_run:
-        print(json.dumps(updates, indent=3))
+        LOGGER.debug("%s", json.dumps(updates, indent=3))
+        for part,body in updates:
+            print(f"----- {body['id']}: {part} -----")
+            snippet = body.get('snippet', {})
+            if 'title' in snippet:
+                print("TITLE:", snippet['title'])
+            if 'description' in snippet:
+                print("DESCRIPTION:", snippet['description'])
+            status = body.get('status', {})
+            if 'publishAt' in status:
+                pub_date = arrow.get(status['publishAt'])
+                print(f"SCHEDULE:", pub_date, pub_date.humanize())
     else:
         send_updates(client, updates)
 
