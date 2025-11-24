@@ -103,7 +103,7 @@ def cleanup_filter(text: str) -> str:
     text = re.sub(r'\n\n+', r'\n\n', text)
 
     # Convert Markdown-style links into plaintext ones
-    text = re.sub(r'\[([^\]]*)\]\(', r'\1 (', text)
+    text = re.sub(r'\[([^\]]*)\]\(([^\)]*)\)', r'\1 [\2]', text)
 
     return text
 
