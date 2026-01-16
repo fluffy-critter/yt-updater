@@ -73,8 +73,9 @@ By default, YouTube API gives you 10,000 units of work per day. For the purposes
 * `getPlaylist`: 1 unit per 50 videos in the playlist
 * `updateVideos`: 1 unit per 50 videos in the playlist + 50 units per video when not doing a dry run
 
-The 50-unit per update cost tends to run out very quickly; for example, on a 20-track album, every attempt at updating or scheduling the publication will cost 1000 units, so you only get 9 tries per day to get things the way you want them.
+The 50-unit per update cost tends to run out very quickly; for example, on a 20-track album, every attempt at updating or scheduling the publication will cost 1001 units (1 for the bulk update request + 20⨉50 for the individual videos), so you only get 9 tries per day to get things the way you want them.
 
+This is also why I have no plans to make a public web-based version of this script.
 
 ## Disclaimer
 
