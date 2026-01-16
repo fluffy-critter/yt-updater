@@ -1,4 +1,4 @@
-# yt_updater
+# YouTube Updater
 
 Useful tools for bulk-updating YouTube playlists and scheduling publication en masse
 
@@ -8,11 +8,11 @@ Useful tools for bulk-updating YouTube playlists and scheduling publication en m
 
 I recommend installing this in one of a few ways:
 
-* **poetry sandbox**: Clone the repo, install [poetry](https://python-poetry.org), and then run `make install`; after this you can run the scripts with e.g. `poetry run getPlaylist` or `poetry run getVideos` from within the source directory.
+* **poetry sandbox** (most recommended): Clone this repo, install [poetry](https://python-poetry.org), and then run `make install`; after this you can run the scripts with e.g. `poetry run getPlaylist` or `poetry run getVideos` from within the source directory. This approach will always give you the latest version of the code, with updates a `git pull && poetry install` away.
 
-* **venv sandbox**: Create a [virtualenv](https://docs.python.org/3/library/venv.html) and, after activating it, run `pip install yt_updater`
+* **venv sandbox**: Create a [virtualenv](https://docs.python.org/3/library/venv.html) and, after activating it, run `pip install yt-updater`. This will give you the latest "stable" release which may be a bit outdated, but will keep it sandboxed away from the rest of your system.
 
-* **pipx install** (less recommended): Using [pipx](https://pipx.pypa.io/) install this as `yt_updater` and it will appear in your global path
+* **pipx install** (least recommended): Using [pipx](https://pipx.pypa.io/) install this as `yt-updater` and its scripts will appear in your global path. This has the disadvantages of the venv sandbox as well as possibly putting stuff on your global path that you don't want there.
 
 ### Configuration
 
