@@ -17,4 +17,7 @@ pylint:
 mypy:
 	poetry run mypy -p yt_updater --ignore-missing-imports --check-untyped-defs
 
+.PHONY: upload
+upload:
+	poetry publish --build
 
