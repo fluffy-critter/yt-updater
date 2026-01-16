@@ -51,9 +51,9 @@ These descriptor files can be created and edited using [Bandcrash](https://fluff
 
 The title templates are strings which can embed the following template items (as Python formatters):
 
-    * `{tnum}`: The track number on the album
-    * `{title}`: The plaintext title of the track
-    * `{filename}`: A filename-compatible version of the track title, as slugified by Bandcrash
+* `{tnum}`: The track number on the album
+* `{title}`: The plaintext title of the track
+* `{filename}`: A filename-compatible version of the track title, as slugified by Bandcrash
 
 The description template is a file in [Jinja2](https://jinja.palletsprojects.com/en/stable/) format. When it's run, it's given the following template items:
 
