@@ -3,9 +3,9 @@
 import argparse
 import json
 import logging
+import os.path
 import re
 import typing
-import os.path
 
 import arrow
 import jinja2
@@ -95,7 +95,8 @@ def read_album(album_path):
 
     for track in album['tracks']:
         if 'lyrics' in track and isinstance(track['lyrics'], str):
-            lyric_file = os.path.join(os.path.dirname(album_path), track['lyrics'])
+            lyric_file = os.path.join(
+                os.path.dirname(album_path), track['lyrics'])
             LOGGER.debug("Checking %s for lyrics", lyric_file)
             if os.path.isfile(lyric_file):
                 with open(lyric_file, 'r', encoding='utf-8') as file:
@@ -332,7 +333,8 @@ def update_callback(request_id, response, exception):
         LOGGER.debug("%s", json.dumps(response, indent=3))
         if 'status' in response and 'publishAt' in response['status']:
             pub_date = arrow.get(response['status']['publishAt'])
-            LOGGER.info("Scheduled time: %s (%s)", pub_date, pub_date.humanize())
+            LOGGER.info("Scheduled time: %s (%s)",
+                        pub_date, pub_date.humanize())
 
 
 def send_updates(client, updates):
@@ -372,7 +374,7 @@ def main():
 
     if options.dry_run:
         LOGGER.debug("%s", json.dumps(updates, indent=3))
-        for part,body in updates:
+        for part, body in updates:
             print(f"----- {body['id']}: {part} -----")
             snippet = body.get('snippet', {})
             if 'title' in snippet:
@@ -382,7 +384,7 @@ def main():
             status = body.get('status', {})
             if 'publishAt' in status:
                 pub_date = arrow.get(status['publishAt'])
-                print(f"SCHEDULE:", pub_date, pub_date.humanize())
+                print("SCHEDULE:", pub_date, pub_date.humanize())
     else:
         send_updates(client, updates)
 
