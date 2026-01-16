@@ -32,7 +32,7 @@ Also note that if you register the application as a test application, you'll nee
 
 3. Run `updateVideos -n playlist.json album.json` to see what changes the script will make; remove the `-n` and run again if you approve. `updateVideos --help` will give you a bunch more useful options for things like generating video descriptions, scheduling the videos' publications (with an optional inter-track time offset to make the playlist management a little easier or even letting you stagger them by minutes/hours/etc.) and so on.
 
-Note that even in `-n` mode this will still make API requests which will drain your daily request quota.
+Note that even in `-n` mode this will still make API requests which will drain your [daily request quota](#quota-limits).
 
 ## Scripts
 
@@ -66,7 +66,7 @@ There is also a filter, `cleanup`, which will do some helpful cleanup steps on t
 
 An example template is in `templates/description.txt`.
 
-## YouTube API quota limits
+## <span id="quota-limits">YouTube API quota limits</span>
 
 By default, YouTube API gives you 10,000 units of work per day. For the purposes of these scripts, they cost the following:
 
