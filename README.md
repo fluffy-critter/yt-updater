@@ -78,5 +78,5 @@ The 50-unit per update cost tends to run out very quickly; for example, on a 20-
 
 ## Disclaimer
 
-This software was partially written with the help of Google's AI chatbot, because life's too short to try to wade through Google's incomprehensibly-dense-yet-vague API documentation.
+This software was partially written with the help of Google's AI chatbot, because life's too short to try to wade through Google's incomprehensibly-dense-yet-vague API documentation. [I'm not happy about it either](https://beesbuzz.biz/code/16680-On-LLM-based-programming).
 

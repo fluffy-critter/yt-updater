@@ -5,6 +5,7 @@ import json
 import logging
 import re
 import typing
+import os.path
 
 import arrow
 import jinja2
@@ -90,7 +91,17 @@ def read_playlist(playlist_path):
 def read_album(album_path):
     """ Given a path to an album spec, return its data """
     with open(album_path, 'r', encoding='utf-8') as file:
-        return json.loads(file.read())
+        album = json.loads(file.read())
+
+    for track in album['tracks']:
+        if 'lyrics' in track and isinstance(track['lyrics'], str):
+            lyric_file = os.path.join(os.path.dirname(album_path), track['lyrics'])
+            LOGGER.debug("Checking %s for lyrics", lyric_file)
+            if os.path.isfile(lyric_file):
+                with open(lyric_file, 'r', encoding='utf-8') as file:
+                    track['lyrics'] = file.read()
+
+    return album
 
 
 def cleanup_filter(text: str) -> str:
