@@ -8,7 +8,7 @@ Useful tools for bulk-updating YouTube playlists and scheduling publication en m
 
 I recommend installing this in one of a few ways:
 
-* **poetry sandbox** (most recommended): Clone this repo, install [poetry](https://python-poetry.org), and then run `make install`; after this you can run the scripts with e.g. `poetry run getPlaylist` or `poetry run getVideos` from within the source directory. This approach will always give you the latest version of the code, with updates a `git pull && poetry install` away.
+* **poetry sandbox** (most recommended): Clone this repo, install [poetry](https://python-poetry.org), and then run `make install` or `poetry install`; after this you can run the scripts with e.g. `poetry run getPlaylist` or `poetry run getVideos` from within the source directory. This approach will always give you the latest version of the code, with updates a `git pull && poetry install` away.
 
 * **venv sandbox**: Create a [virtualenv](https://docs.python.org/3/library/venv.html) and, after activating it, run `pip install yt-updater`. This will give you the latest "stable" release which may be a bit outdated, but will keep it sandboxed away from the rest of your system.
 
@@ -80,4 +80,3 @@ This is also why I have no plans to make a public web-based version of this scri
 ## Disclaimer
 
 This software was partially written with the help of Google's AI chatbot, because life's too short to try to wade through Google's incomprehensibly-dense-yet-vague API documentation. [I'm not happy about it either](https://beesbuzz.biz/code/16680-On-LLM-based-programming).
-
